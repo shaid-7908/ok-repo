@@ -1,0 +1,127 @@
+1. User Module
+User Schema
+{
+  _id: ObjectId,
+  name: String,
+  email: String (unique),
+  password: String (hashed),
+  role: String (enum: ['admin', 'seller', 'customer']),
+  createdAt: Date,
+  updatedAt: Date
+}
+
+APIs
+POST /auth/register – Public registration
+
+
+POST /auth/login – Get JWT token
+
+
+GET /users – Admin only: View paginated user list
+
+
+2. Product Module
+Product Schema
+{
+  _id: ObjectId,
+  name: String,
+  description: String,
+  price: Number,
+  category: String,
+  seller: ObjectId (ref: User),
+  createdAt: Date,
+  updatedAt: Date
+}
+
+APIs
+POST /products – Seller only: Add a product
+
+
+GET /products – Public: View products with filters:
+
+
+?category=Electronics
+
+
+?search=phone
+
+
+?minPrice=1000&maxPrice=5000
+
+
+Use MongoDB aggregation pipeline for filter + search queries.
+
+3. Review Module
+Review Schema
+js
+CopyEdit
+{
+  _id: ObjectId,
+  rating: Number (1–5),
+  comment: String,
+  product: ObjectId (ref: Product),
+  customer: ObjectId (ref: User),
+  createdAt: Date
+}
+
+APIs
+POST /reviews – Customer only: Add review for a product
+
+
+GET /reviews/:productId – Public: Get reviews for a product
+
+
+
+4. Analytics Module (Admin only)
+Endpoint: GET /analytics
+Return the following using aggregation:
+Top 3 best-rated products (based on average rating)
+
+
+Total number of reviews and average rating per product
+
+
+Number of products per category
+
+
+
+Authentication + Role-Based Access
+Use JWT for authentication.
+
+
+Middleware to verify role:
+
+
+Admin can see users and analytics
+
+
+Seller can only manage own products
+
+
+Customer can only post reviews
+
+
+Protect all routes with appropriate auth/role checks.
+
+
+
+MongoDB Indexing Rules
+Unique index on email in User
+
+
+Compound index on category, price in Product
+
+
+Index product in Review for fast lookup
+
+Bonus (Optional)
+Add bcrypt password hashing
+
+
+Add input validation middleware (express-validator)
+
+
+Use dotenv for config separation
+
+
+Add rate limiting for public routes
